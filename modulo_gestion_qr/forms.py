@@ -1,10 +1,17 @@
+import os
 import re
 
+from functools import lru_cache
+from fnmatch import fnmatch
+
 from django import forms
+from django.apps import apps
+from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import inlineformset_factory
 
-from .models import Cliente, Producto, Serial, Solicitud, TemplateCliente, Ubicacion
+from .models import Cliente, Entrega, Producto, Serial, Solicitud, TemplateCliente, Ubicacion
+
 
 
 
@@ -52,8 +59,7 @@ class CustomLoginForm(AuthenticationForm):
     password = forms.CharField(label="Contraseña", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 
-from django import forms
-from .models import Serial, Solicitud
+
 
 class AsociarSerialesForm(forms.Form):
     desde = forms.CharField(label='Serial inicial', max_length=100)
@@ -164,19 +170,6 @@ class BuscarSerialesForm(forms.Form):
 
 
 
-
-
-
-# forms.py
-import os
-import re
-from functools import lru_cache
-from fnmatch import fnmatch
-from django import forms
-from django.apps import apps
-from django.conf import settings
-from .models import TemplateCliente
-
 # --- Descubrir .html recursivamente + filtrar por allowlist/blacklist ---
 @lru_cache(maxsize=1)
 def discover_templates_html_filtered():
@@ -269,21 +262,63 @@ class TemplateClienteForm(forms.ModelForm):
         return nombre
 
 
-
-
-
-from django import forms
-from django.forms import inlineformset_factory
-from .models import Solicitud, Ubicacion
-
 class SolicitudForm(forms.ModelForm):
+
+    def clean_celular(self):
+        celular = self.cleaned_data.get('celular')
+
+        if not celular:
+            return celular
+
+        numero = re.sub(r'\D', '', celular)
+
+        if numero.startswith('57'):
+            numero = numero[2:]
+
+        if len(numero) != 10:
+            raise forms.ValidationError(
+                "El celular debe tener 10 dígitos (ej: 3001234567)"
+            )
+
+        return f'+57{numero}'
+
+
+    def clean_nit(self):
+        nit = self.cleaned_data.get("nit")
+
+        if not nit:
+            return nit
+
+        nit = nit.strip()
+
+        # Si tiene guión, tomar solo la parte izquierda
+        if "-" in nit:
+            nit = nit.split("-")[0]
+
+        # Validar que sea numérico
+        if not nit.isdigit():
+            raise forms.ValidationError(
+                "El NIT solo debe contener números."
+            )
+
+        return nit
+
+
+    def clean_acepta_tratamiento_datos(self):
+        value = self.cleaned_data.get("acepta_tratamiento_datos")
+        if not value:
+            raise forms.ValidationError(
+                "Debes aceptar la política de tratamiento de datos."
+            )
+        return value
+        
     class Meta:
         model = Solicitud
         fields = [
             'codigo', 'logo', 'sobre_nosotros', 'razon_social', 'nit',
-            'correo', 'pagina_web', 'link_adicional',
-            'cajas', 'rollos', 'seriales',  'celular',   
-            'mostrar_boton_entrega'
+            'correo', 'pagina_web', 'link_adicional', 'celular',
+            'mostrar_boton_entrega',
+            'acepta_tratamiento_datos', 
         ]
         widgets = {
             'codigo': forms.TextInput(attrs={'readonly': 'readonly'}),
@@ -291,27 +326,33 @@ class SolicitudForm(forms.ModelForm):
         }
 
 
+class UbicacionForm(forms.ModelForm):
+    class Meta:
+        model = Ubicacion
+        fields = ['direccion', 'telefono', 'ciudad']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        direccion = cleaned_data.get("direccion")
+        telefono = cleaned_data.get("telefono")
+        ciudad = cleaned_data.get("ciudad")
+
+        # Solo valida si tiene AL MENOS un campo con dato
+        if not any([direccion, telefono, ciudad]):
+            # Marca el form como sin cambios para que Django lo ignore
+            self.cleaned_data = {}
+            raise forms.ValidationError("Fila vacía ignorada")
+
+        return cleaned_data
+
+
 UbicacionFormSet = inlineformset_factory(
     Solicitud,
     Ubicacion,
-    fields=('direccion', 'telefono', 'ciudad'),
-    extra=0,
-    can_delete=True
+    form=UbicacionForm,
+    extra=1,
+    can_delete=True,
 )
-
-
-UbicacionFormSetCreate = inlineformset_factory(
-    Solicitud,
-    Ubicacion,
-    fields=('direccion', 'telefono', 'ciudad'),
-    extra=2,
-    can_delete=True
-)
-
-
-from django import forms
-from .models import Entrega
-
 class EntregaForm(forms.ModelForm):
     class Meta:
         model = Entrega

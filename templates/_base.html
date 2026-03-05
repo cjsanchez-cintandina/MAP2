@@ -26,6 +26,7 @@
 </head>
 <body class="bg-gray-100">
 
+{% if not ocultar_menu %}
 <!-- Navbar -->
 <nav class="navbar-bg border-gray-200 fixed w-full z-50 top-0 shadow-lg">
     <div class="flex justify-between items-center px-4 py-3">
@@ -42,9 +43,11 @@
         </form>
     </div>
 </nav>
+{% endif %}
 
-<!-- Sidebar -->
-<aside id="default-sidebar" class="fixed top-16 left-0 z-40 w-64 h-screen transform -translate-x-full md:translate-x-0 transition-transform duration-300 sidebar-bg px-3 py-4 overflow-y-auto">
+{% if not ocultar_menu %}
+    <!-- Sidebar -->
+    <aside id="default-sidebar" class="fixed top-16 left-0 z-40 w-64 h-screen transform -translate-x-full md:translate-x-0 transition-transform duration-300 sidebar-bg px-3 py-4 overflow-y-auto">
     <div class="h-full px-3 py-4 overflow-y-auto">
         {% if request.user.is_authenticated %}
 
@@ -107,10 +110,11 @@
 
         {% endif %}
     </div>
-</aside>
+</aside>    
+{% endif %}
 
 <!-- Main Content -->
-<div class="p-6 mt-20 md:ml-64">
+<div class="p-6 {% if not ocultar_menu %}mt-20 md:ml-64{% else %}mt-10{% endif %}">
     {% block content %}
     {% endblock %}
 </div>

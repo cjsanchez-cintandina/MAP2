@@ -44,9 +44,21 @@ from .forms import (
     SerialForm,
     SolicitudForm,
     TemplateClienteForm,
-    UbicacionFormSet,
+    #UbicacionFormSet,
+    UbicacionFormSet
 )
 from .models import Cliente, Entrega, Producto, Serial, Solicitud, TemplateCliente
+from .utils.entrega_docs import enviar_correo_entrega_sendgrid
+from django.db.models import Value
+
+
+
+
+from django.db.models import Max
+from django.db.models.functions import Substr
+from django.db.models import IntegerField
+from django.db.models.functions import Cast
+
 
 logger = logging.getLogger(__name__)
 
@@ -64,8 +76,6 @@ def index(request):
 def home(request):
     return render(request, 'home.html')
 
-
-
 @login_required
 @transaction.atomic
 @role_required('Gestión de Seriales')
@@ -80,7 +90,7 @@ def generar_seriales(request):
 
             # Paso 1: Obtener último serial
             ultimo_serial_obj = Serial.objects.aggregate(ultimo_serial=Max('serial'))
-            ultimo_serial = int(ultimo_serial_obj['ultimo_serial']) if ultimo_serial_obj['ultimo_serial'] else 100000000
+            ultimo_serial = int(ultimo_serial_obj['ultimo_serial']) if ultimo_serial_obj['ultimo_serial'] else 0
 
             # Paso 2: Reservar un rango suficientemente grande
             rango_candidato = range(ultimo_serial + 1, ultimo_serial + 1 + (numero_seriales * 2))
@@ -137,32 +147,52 @@ def generar_seriales(request):
 def ver_informacion_qr(request, cliente_slug):
     serial_param = request.GET.get('qr')
     logger.debug(f"Accediendo a ver_informacion_qr con slug={cliente_slug}, qr={serial_param}")
+
     if not serial_param:
         logger.error("No se proporcionó un parámetro QR")
         return render(request, '404.html', {'error': 'No se proporcionó un código QR válido'}, status=404)
+
     try:
         logger.debug(f"Buscando cliente con slug={cliente_slug}")
         cliente_obj = get_object_or_404(Cliente, slug=cliente_slug)
         logger.debug(f"Cliente encontrado: {cliente_obj.nombre}")
-        
-        # Manejar serial como string (CharField)
+
         logger.debug(f"Buscando serial={serial_param} para cliente={cliente_obj.id}")
         serial_obj = get_object_or_404(
-            Serial.objects.select_related('producto', 'cliente', 'solicitud').prefetch_related('solicitud__ubicaciones'),
+            Serial.objects.select_related('producto', 'cliente', 'solicitud')
+            .prefetch_related('solicitud__ubicaciones'),
             serial=serial_param,
             cliente=cliente_obj
         )
+
         logger.debug(f"Serial encontrado: {serial_obj.serial}")
-        
+
         solicitud = serial_obj.solicitud
+
+        # 🔴 SI EL SERIAL NO TIENE SOLICITUD
         if not solicitud:
-            # Si no hay solicitud asociada, renderiza la landing para seriales inactivos
-            logger.debug(f"Serial {serial_obj.serial} no tiene solicitud asociada, renderizando landing inactiva")
+
+            producto = serial_obj.producto
+
+            if producto and producto.template:
+                template_name = producto.template.nombre
+            else:
+                template_name = "landing.html"
+
+            # Si el template es crear solicitud
+            if template_name == "crear_solicitud.html":
+                url = reverse('crear_solicitud')
+                return redirect(f"{url}?serial={serial_obj.serial}")
+
+            # Si no aplica template especial
             return render(request, 'landing/serial_inactivo.html', {'serial': serial_obj})
-        
-        # Si hay solicitud, procede como antes
+
+
+        # 🟢 SI EL SERIAL YA TIENE SOLICITUD
         ubicacion = solicitud.ubicaciones.first() if solicitud else None
+
         logger.debug(f"Solicitud: {solicitud}, Ubicación: {ubicacion}")
+
         contexto = {
             'cliente': cliente_obj,
             'producto': serial_obj.producto,
@@ -170,17 +200,20 @@ def ver_informacion_qr(request, cliente_slug):
             'solicitud': solicitud,
             'ubicacion': ubicacion,
         }
+
         return render(request, 'landing/landing_cinta.html', contexto)
+
     except Cliente.DoesNotExist:
         logger.error(f"Cliente con slug={cliente_slug} no encontrado")
         return render(request, '404.html', {'error': f'Cliente con slug {cliente_slug} no encontrado'}, status=404)
+
     except Serial.DoesNotExist:
         logger.error(f"Serial {serial_param} no encontrado para cliente {cliente_slug}")
         return render(request, '404.html', {'error': f'Serial {serial_param} no encontrado'}, status=404)
+
     except Exception as e:
         logger.error(f"Error inesperado en ver_informacion_qr: {str(e)}", exc_info=True)
-        raise  
-
+        raise
 
 # Vista de éxito para mostrar los nuevos seriales generados
 @login_required
@@ -490,8 +523,7 @@ def asociar_seriales(request):
 
 
 # --- NUEVO: inferir la solicitud a partir del rango ---
-from django.http import JsonResponse
-from django.db.models import Value
+
 
 # --- Actualizado: Inferir la solicitud a partir del rango ---
 @role_required('Gestión de Seriales')
@@ -703,80 +735,98 @@ def exportar_csv(request):
 
         return response
     
-from .forms import SolicitudForm, UbicacionFormSetCreate  # ← CREAR usa este
+
 
 logger = logging.getLogger('storages')
 
-@login_required
-@role_required('Gestión de Seriales')
+
+
+
 @transaction.atomic
 def crear_solicitud(request):
-    if request.method == 'POST':
-        form = SolicitudForm(request.POST, request.FILES)
-        # Usamos el formset de CREAR (con extra=1)
-        formset = UbicacionFormSetCreate(request.POST, request.FILES, instance=Solicitud())
 
-        logger.debug(f"Archivos recibidos: {request.FILES}")
-        print("ARCHIVO ENVIADO:", request.FILES.get('logo'))
+    serial_qr = request.GET.get("serial")
+    ocultar_menu = False
 
-        if form.is_valid() and formset.is_valid():
-            try:
-                solicitud = form.save(commit=False)
-
-                # --- Tu lógica de S3 (la dejo igual) ---
-                if 'logo' in request.FILES:
-                    logo_file = request.FILES['logo']
-                    logger.debug(f"Logo recibido: {logo_file.name}, Tamaño: {logo_file.size}")
-                    storage = S3Boto3Storage()
-                    file_path = f"logos_empresas/{logo_file.name}"
-                    try:
-                        storage.save(file_path, logo_file)
-                        solicitud.logo = file_path
-                        logger.debug(f"Logo guardado en S3: {file_path}")
-                    except ClientError as e:
-                        logger.error(f"Error al subir logo a S3: {e}")
-                        messages.error(request, f"Error al subir el logo a S3: {e}")
-                        return render(request, 'crear_solicitud.html', {
-                            'form': form,
-                            'formset': formset
-                        })
-                # --- fin S3 ---
-
-                solicitud.save()
-                formset.instance = solicitud
-                formset.save()
-
-                logger.debug(f"Solicitud creada: {solicitud.codigo}, Logo URL: {solicitud.logo.url if solicitud.logo else 'No logo'}")
-                messages.success(request, 'Solicitud creada exitosamente.')
-                return render(request, 'crear_solicitud.html', {
-                    'form': SolicitudForm(),
-                    'formset': UbicacionFormSetCreate(),  # ← al recargar, muestra otra vez 1 fila vacía
-                    'exito': True,
-                    'codigo_generado': solicitud.codigo,
-                    'url_generada': f"{settings.BASE_URL}/landing/{solicitud.codigo}/"
-                })
-            except Exception as e:
-                logger.error(f"Error inesperado al crear solicitud: {e}")
-                messages.error(request, f"Error al crear la solicitud: {e}")
-                return render(request, 'crear_solicitud.html', {
-                    'form': form,
-                    'formset': formset
-                })
-        else:
-            logger.error(f"Errores en el formulario: {form.errors}, Formset: {formset.errors}")
-            messages.error(request, 'Por favor corrige los errores en el formulario.')
-            return render(request, 'crear_solicitud.html', {
-                'form': form,
-                'formset': formset
-            })
+    # Si viene desde QR
+    if serial_qr:
+        ocultar_menu = True
     else:
-        form = SolicitudForm()
-        formset = UbicacionFormSetCreate()  # ← importante: aquí también
+        # Si NO viene desde QR → exigir login
+        if not request.user.is_authenticated:
+            return redirect("login")
+
+    if request.method == 'POST':
+
+        print("=== POST DATA UBICACIONES ===", flush=True)
+        for key, value in request.POST.items():
+            print(f"  {key}: '{value}'", flush=True)
+        print("=== FIN ===", flush=True)
+
+        form = SolicitudForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            solicitud = form.save(commit=False)
+
+            if 'logo' in request.FILES:
+                logo_file = request.FILES['logo']
+                solicitud.logo.save(logo_file.name, logo_file, save=False)
+
+            solicitud.save()
+
+            formset = UbicacionFormSet(
+                request.POST,
+                request.FILES,
+                instance=solicitud
+            )
+
+            if formset.is_valid():
+                try:
+                    ubicaciones = formset.save(commit=False)
+
+                    for ubicacion in ubicaciones:
+                        if any([ubicacion.direccion, ubicacion.telefono, ubicacion.ciudad]):
+                            ubicacion.solicitud = solicitud
+                            ubicacion.save()
+
+                    for obj in formset.deleted_objects:
+                        obj.delete()
+
+                    messages.success(request, 'Solicitud creada exitosamente.')
+
+                    return render(request, 'crear_solicitud.html', {
+                        'form': SolicitudForm(initial={'codigo': get_siguiente_codigo()}),
+                        'formset': UbicacionFormSet(),
+                        'exito': True,
+                        'codigo_generado': solicitud.codigo,
+                        'url_generada': f"{settings.BASE_URL}/landing/{solicitud.codigo}/",
+                        'ocultar_menu': ocultar_menu
+                    })
+
+                except Exception as e:
+                    logger.error(f"Error inesperado al crear solicitud: {e}")
+                    messages.error(request, f"Error al crear la solicitud: {e}")
+
+            else:
+                messages.error(request, "Errores en las ubicaciones.")
+
+        return render(request, 'crear_solicitud.html', {
+            'form': form,
+            'formset': UbicacionFormSet(request.POST, request.FILES),
+            'ocultar_menu': ocultar_menu
+        })
+
+    else:
+
+        form = SolicitudForm(initial={'codigo': get_siguiente_codigo()})
+        formset = UbicacionFormSet()
+
     return render(request, 'crear_solicitud.html', {
         'form': form,
-        'formset': formset
+        'formset': formset,
+        'serial_qr': serial_qr,
+        'ocultar_menu': ocultar_menu
     })
-
 
 def landing_solicitud(request, codigo):
     solicitud = get_object_or_404(Solicitud, codigo=codigo)
@@ -788,9 +838,6 @@ def landing_solicitud(request, codigo):
 
 
 
-from storages.backends.s3boto3 import S3Boto3Storage
-from botocore.exceptions import ClientError
-import logging
 
 logger = logging.getLogger('storages')
 
@@ -846,7 +893,20 @@ def editar_solicitud(request, solicitud_id):
 
                 # guarda ubicaciones
                 formset.instance = solicitud_actualizada
-                formset.save()
+                formset.instance = solicitud_actualizada
+                ubicaciones = formset.save(commit=False)
+
+                for ubicacion in ubicaciones:
+                    if any([
+                        ubicacion.direccion,
+                        ubicacion.telefono,
+                        ubicacion.ciudad
+                    ]):
+                        ubicacion.solicitud = solicitud_actualizada
+                        ubicacion.save()
+
+                for obj in formset.deleted_objects:
+                    obj.delete()
 
                 messages.success(request, 'La solicitud fue actualizada exitosamente.')
                 # Quédate en el mismo formulario (tu preferencia)
@@ -876,7 +936,20 @@ def editar_solicitud(request, solicitud_id):
         'solicitud': solicitud
     })
     
+#crear solicitud con código autogenerado
 
+def get_siguiente_codigo():
+    ultima = (
+        Solicitud.objects
+        .filter(codigo__startswith='CEI')
+        .annotate(
+            numero=Cast(Substr('codigo', 4), IntegerField())
+        )
+        .aggregate(max_num=Max('numero'))
+    )
+
+    siguiente = (ultima['max_num'] or 0) + 1
+    return f'CEI{siguiente:04d}'
 
 # views.py
 def buscar_solicitud(request):
@@ -916,14 +989,6 @@ def landing_serial_qr(request, serial):
 # Vista 2: Mostrar formulario de entrega y guardar evidencia
 
 # views.py
-from django.db import transaction
-from django.shortcuts import get_object_or_404, render
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from .models import Serial, Entrega
-from PIL import Image
-from io import BytesIO
-import base64, uuid
-from .utils.entrega_docs import enviar_correo_entrega_sendgrid
 
 
 @transaction.atomic
@@ -1056,4 +1121,49 @@ def formulario_entrega(request):
         'solicitud': solicitud,
         'remaining': remaining,
         'max_allowed': max_allowed,
+    })
+
+
+#buscar nit para autocompletar datos en el formulario de entrega
+def buscar_nit(request):
+    nit = request.GET.get("nit")
+
+    if not nit:
+        return JsonResponse({"existe": False})
+
+    try:
+        solicitud = Solicitud.objects.get(nit=nit)
+
+        data = {
+            "existe": True,
+            "razon_social": solicitud.razon_social,
+            "correo": solicitud.correo,
+            "pagina_web": solicitud.pagina_web,
+            "celular": solicitud.celular,
+        }
+
+    except Solicitud.DoesNotExist:
+        data = {"existe": False}
+
+    return JsonResponse(data)
+
+def cargar_template_cliente(request, cliente_slug):
+    """
+    Carga el template asociado al cliente.
+    """
+
+    cliente = get_object_or_404(Cliente, slug=cliente_slug)
+
+    template_cliente = TemplateCliente.objects.filter(cliente=cliente).first()
+
+    if not template_cliente:
+        raise Http404("El cliente no tiene template asignado")
+
+    template_name = template_cliente.template_html
+
+    form = SolicitudForm()
+
+    return render(request, template_name, {
+        "form": form,
+        "cliente": cliente
     })

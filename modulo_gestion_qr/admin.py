@@ -75,7 +75,10 @@ class SolicitudAdmin(admin.ModelAdmin):
     list_display = ('codigo', 'razon_social', 'nit', 'correo', 'fecha_creacion')
     search_fields = ('codigo', 'razon_social', 'nit', 'correo')
     list_filter = ('fecha_creacion',)
-    fields = ('codigo', 'logo', 'razon_social', 'nit', 'correo', 'pagina_web', 'link_adicional', 'cajas', 'rollos', 'seriales', 'sobre_nosotros', 'mostrar_boton_entrega')
+    fields = ('codigo', 'logo', 'razon_social', 'nit', 'correo',
+    'pagina_web', 'link_adicional', 'sobre_nosotros',
+    'mostrar_boton_entrega',
+    'acepta_tratamiento_datos',)
 
     def save_model(self, request, obj, form, change):
         try:
@@ -99,12 +102,14 @@ class UbicacionAdmin(admin.ModelAdmin):
 
 @admin.register(Entrega)
 class EntregaAdmin(admin.ModelAdmin):
-    list_display = ('serial', 'nombre', 'correo', 'telefono', 'fecha_entrega')
+    list_display = ('get_serial', 'nombre', 'correo', 'telefono', 'fecha_entrega')
     list_filter = ('fecha_entrega',)
     search_fields = ('serial__serial', 'nombre', 'correo', 'telefono')
     readonly_fields = ('foto', 'firma', 'fecha_entrega')
 
-
+    def get_serial(self, obj):
+        return obj.serial.serial if obj.serial else "Sin serial"
+    get_serial.short_description = 'Serial'
 
 
 

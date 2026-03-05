@@ -154,6 +154,13 @@
           {{ form.link_adicional|add_class:"w-full border-gray-300 rounded-lg focus:ring-blue-500" }}
         </div>
 
+        <div>
+          <label class="text-sm font-semibold text-gray-700 mb-2 block">
+            Celular (WhatsApp)
+          </label>
+          {{ form.celular|add_class:"w-full border-gray-300 rounded-lg focus:ring-blue-500" }}
+        </div>
+
         <!-- Toggle: Mostrar botón de confirmar entrega (CSS puro) -->
         <div class="col-span-2" style="margin-top: 1.25rem;">
           <input
@@ -178,37 +185,149 @@
       </div>
 
       <!-- Ubicaciones -->
-      {{ formset.management_form }}
-      {% for f in formset %}
-        {# IMPORTANTE: renderizar campos ocultos (incluye 'id') #}
-        {% for hidden in f.hidden_fields %}
-          {{ hidden }}
-        {% endfor %}
+      <hr class="my-4">
+        <div class="flex justify-between items-center mt-6 mb-4">
+          <h2 class="text-lg font-semibold text-gray-700">
+            Ubicaciones
+          </h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            {{ f.direccion.label_tag }}
-            {{ f.direccion|add_class:"w-full border-gray-300 rounded-lg focus:ring-blue-500" }}
-          </div>
-          <div>
-            {{ f.telefono.label_tag }}
-            {{ f.telefono|add_class:"w-full border-gray-300 rounded-lg focus:ring-blue-500" }}
-          </div>
-          <div>
-            {{ f.ciudad.label_tag }}
-            {{ f.ciudad|add_class:"w-full border-gray-300 rounded-lg focus:ring-blue-500" }}
-          </div>
+          <button 
+            type="button"
+            id="add-ubicacion"
+            style="background:#2563eb;color:white;"
+            class="px-4 py-2 rounded-lg shadow">
+            + Agregar otra sede
+          </button>
         </div>
-      {% endfor %}
 
-      <div class="flex justify-start">
-        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded-lg shadow">
+      {{ formset.management_form }}
+
+      <div id="ubicaciones-container" class="space-y-6 mt-4">
+        {% for f in formset %}
+
+          {% for hidden in f.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+
+          <div class="ubicacion-item bg-white rounded-xl p-5 shadow-md transition hover:shadow-lg">
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+              <div>
+                {{ f.direccion.label_tag }}
+                {{ f.direccion|add_class:"w-full border-gray-300 rounded-lg focus:ring-blue-500" }}
+              </div>
+              <div>
+                {{ f.telefono.label_tag }}
+                {{ f.telefono|add_class:"w-full border-gray-300 rounded-lg focus:ring-blue-500" }}
+              </div>
+              <div>
+                {{ f.ciudad.label_tag }}
+                {{ f.ciudad|add_class:"w-full border-gray-300 rounded-lg focus:ring-blue-500" }}
+              </div>
+            </div>
+
+            {% if f.DELETE %}
+              <input type="checkbox" class="hidden delete-field"
+                name="{{ f.DELETE.html_name }}"
+                id="{{ f.DELETE.id_for_label }}">
+            {% endif %}
+
+            <div class="flex justify-end mt-4">
+              <button type="button"
+                class="btn-remove-ubicacion text-xs text-red-500 border border-red-200 px-3 py-1.5 rounded-full hover:bg-red-500 hover:text-white transition">
+                Eliminar
+              </button>
+            </div>
+
+          </div>
+
+        {% endfor %}
+      </div>
+
+      <!-- EMPTY FORM (FUERA DEL FOR) -->
+      <template id="empty-ubicacion-template">
+        <div class="ubicacion-item bg-white rounded-xl p-5 shadow-md transition hover:shadow-lg">
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+            <div>
+              {{ formset.empty_form.direccion.label_tag|safe }}
+              {{ formset.empty_form.direccion|add_class:"w-full border-gray-300 rounded-lg focus:ring-blue-500"|safe }}
+            </div>
+            <div>
+              {{ formset.empty_form.telefono.label_tag|safe }}
+              {{ formset.empty_form.telefono|add_class:"w-full border-gray-300 rounded-lg focus:ring-blue-500"|safe }}
+            </div>
+            <div>
+              {{ formset.empty_form.ciudad.label_tag|safe }}
+              {{ formset.empty_form.ciudad|add_class:"w-full border-gray-300 rounded-lg focus:ring-blue-500"|safe }}
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-4">
+            <button type="button"
+              class="btn-remove-ubicacion text-xs text-red-500 border border-red-200 px-3 py-1.5 rounded-full hover:bg-red-500 hover:text-white transition">
+              Eliminar
+            </button>
+          </div>
+
+        </div>
+      </template>
+
+      <div class="flex justify-start mt-6">
+        <button type="submit"
+          class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded-lg shadow">
           Guardar Cambios
         </button>
       </div>
-    </form>
-  </div>
-</div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+          const addBtn = document.getElementById('add-ubicacion');
+          const container = document.getElementById('ubicaciones-container');
+          const tpl = document.getElementById('empty-ubicacion-template');
+          const totalFormsInput = document.querySelector('input[name$="-TOTAL_FORMS"]');
+
+          if (!addBtn || !container || !tpl || !totalFormsInput) return;
+
+          function bindRemoveButtons() {
+            container.querySelectorAll('.btn-remove-ubicacion').forEach(btn => {
+              btn.onclick = () => {
+                const item = btn.closest('.ubicacion-item');
+                const deleteField = item.querySelector('.delete-field');
+
+                if (deleteField) {
+                  deleteField.checked = true;
+                  item.style.display = 'none';
+                } else {
+                  item.remove();
+                }
+              };
+            });
+          }
+
+          bindRemoveButtons();
+
+          addBtn.addEventListener('click', () => {
+            const index = parseInt(totalFormsInput.value);
+            const fragment = document.importNode(tpl.content, true);
+
+            fragment.querySelectorAll('[name],[id],[for]').forEach(el => {
+              ['name','id','for'].forEach(attr => {
+                if (el.hasAttribute(attr)) {
+                  el.setAttribute(attr, el.getAttribute(attr).replace(/__prefix__/g, index));
+                }
+              });
+            });
+
+            container.appendChild(fragment);
+            totalFormsInput.value = index + 1;
+            bindRemoveButtons();
+          });
+
+        });
+      </script>
+
 {% endblock %}
 
 

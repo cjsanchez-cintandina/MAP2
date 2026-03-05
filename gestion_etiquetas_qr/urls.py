@@ -39,7 +39,7 @@ from modulo_gestion_qr.views import (
     crear_solicitud,
 )
 
-
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -81,9 +81,14 @@ urlpatterns = [
     path('cinta/<str:serial>/', views.landing_serial_qr, name='landing_serial_qr'),
     path('entrega/', views.formulario_entrega, name='formulario_entrega'),
     path('api/solicitud_por_rango/', views.solicitud_por_rango, name='solicitud_por_rango'),
+    path("buscar-nit/", views.buscar_nit, name="buscar_nit"),
+    path('<slug:cliente_slug>/', views.cargar_template_cliente, name='template_cliente'),
 
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+if settings.DEBUG and not settings.USE_S3:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 

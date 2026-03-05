@@ -8,6 +8,38 @@
 
 {# ====== Estilos SOLO para el toggle (independientes de Tailwind) ====== #}
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+  * {
+    font-family: 'Poppins', sans-serif !important;
+  }
+ /* Tamaño de texto global */
+  p, span, label {
+    font-size: 1rem !important;
+    line-height: 1.3 !important;
+  }
+
+  /* Inputs y botones no se afectan */
+  input, textarea, select {
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+  }
+
+  h1 { font-size: 2.5rem !important; line-height: 1.2 !important; }
+  h3 { font-size: 1.25rem !important; line-height: 1.2 !important; }
+
+  /* Evitar que spans de labels se desborden */
+  span.text-lg {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+  margin-bottom: 2px;
+  box-sizing: border-box !important;
+}
+
   .toggle-row { display:flex; align-items:center; gap:12px; user-select:none; }
   .visually-hidden {
     position:absolute !important; width:1px !important; height:1px !important;
@@ -21,11 +53,341 @@
   #id_mostrar_boton_entrega:focus + label .toggle-track { box-shadow:0 0 0 4px rgba(134,239,172,.6); outline:none; }
   .toggle-text { font-size:.9rem; font-weight:600; color:#374151; line-height:1.5; }
   .toggle-help { font-size:.75rem; color:#6B7280; margin-top:.25rem; }
+
+  /* ===== Animación sedes ===== */
+  .ubicacion-enter {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  .ubicacion-enter-active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: opacity 300ms ease, transform 300ms ease;
+  }
+
+  #modal-sede > div {
+    border-radius: 1rem !important;
+    overflow: hidden;
+  }
+
+  div#modal-sede-inner {
+    border-radius: 1rem !important;
+    -webkit-border-radius: 1rem !important;
+    -moz-border-radius: 1rem !important;
+  }
+
+  .logo-icono svg {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.logo-btn-icono {
+  display: flex;
+  overflow: hidden;
+  border-radius: 6px;
+  padding: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.logo-btn-icono:hover {
+  background: rgba(104, 119, 95, 0.1);
+  box-shadow: 0 2px 8px rgba(126, 138, 119, 0.25);
+  transform: scale(1.15);
+}
+
+#id_nombre_empresarial:disabled {
+  background: #F3F4F6;
+  color: #9CA3AF;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-icono-img {
+  transition: filter 0.2s ease;
+}
+
+.activo .btn-icono-img {
+  filter: brightness(0) invert(1);
+}
+
+.btn-sede-accion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  padding: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-sede-accion:hover {
+  background: rgba(104, 119, 95, 0.1);
+  box-shadow: 0 2px 8px rgba(126, 138, 119, 0.25);
+  transform: scale(1.15);
+}
+
+input:not([type="checkbox"]):not([type="file"]):not([type="hidden"]),
+textarea,
+select {
+  background-color: rgb(243, 243, 243) !important;
+  border-color: rgb(230, 230, 230) !important;
+}
+
+input:not([type="checkbox"]):not([type="file"]):not([type="hidden"]):focus,
+textarea:focus,
+select:focus {
+  background-color: rgb(243, 243, 243) !important;
+  border-color: #348200 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(52, 130, 0, 0.2) !important;
+}
+
+#id_codigo_solicitud {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+#id_codigo_solicitud:focus {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+
+/* Compactación general móvil */
+.grid { gap: 0.6rem !important; }
+
+.space-y-6 > * + *,
+.space-y-5 > * + *,
+.space-y-4 > * + * {
+  margin-top: 0.6rem !important;
+}
+
+p, span, label,
+input, textarea, select {
+  font-size: 0.75rem !important;
+}
+
+  /* Header: imagen al lado del título, centrado */
+  .flex.items-center.justify-center.mb-6 {
+    flex-direction: row !important;
+    gap: 12px !important;
+    text-align: center;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .flex.items-center.justify-center.mb-6 h1 {
+  font-size: 1.5rem !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+  .flex.items-center.justify-center.mb-6 img {
+    width: 80px !important;
+    height: 75px !important;
+    flex-shrink: 0 !important;
+  }
+  /* Padding del formulario */
+  .bg-white.p-6 {
+    padding: 1rem !important;
+  }
+
+  /* Grids de 2 columnas → 1 columna */
+  .grid.grid-cols-1.md\:grid-cols-2 > div,
+  .grid.grid-cols-1 > div {
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* col-span-2 → 1 columna */
+  .col-span-2 {
+    grid-column: span 1 !important;
+  }
+
+  /* Textos de labels */
+  span.text-lg {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+  margin-bottom: 2px;
+  box-sizing: border-box !important;
+}
+
+  /* Banner principal */
+  .flex.flex-col.items-center.justify-center span {
+    font-size: 0.85rem !important;
+  }
+
+ /* ---- Bloque logo: móvil ---- */
+
+ 
+  #bloque-logo {
+    padding: 8px 8px 0 8px;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+
+  /* Wrapper interno */
+  #bloque-logo .logo-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* Botón subir */
+  #bloque-logo .logo-upload {
+    width: 100%;
+  }
+
+  #bloque-logo .logo-upload label {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0.65rem;
+    font-size: 0.85rem;
+    border-radius: 0.7rem;
+  }
+
+  #bloque-logo .logo-upload img {
+    width: 14px;
+    height: 14px;
+  }
+
+    /* Contenedor botón + cuadro */
+  .flex.items-stretch.gap-2 {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Lado izquierdo */
+  .flex.items-stretch.gap-2 > div:first-child {
+    width: 100% !important;
+  }
+
+  /* Recuadro blanco */
+  .flex.items-stretch.gap-2 > div:last-child {
+    width: 100% !important;
+    border-radius: 0.6rem !important;
+  }
+
+   /* Quitar margen lateral del bloque logo */
+  .flex.items-stretch.gap-2 {
+    margin-left: -0.5rem !important;
+    margin-right: -0.5rem !important;
+  }
+
+  /* Hacer que los hijos ocupen todo el ancho real */
+  .flex.items-stretch.gap-2 > div {
+    width: 100% !important;
+  }
+
+
+  /* Bloque archivo cargado */
+  #bloque-logo .logo-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-top: 1px solid #E5E7EB;
+    background: #fff;
+  }
+
+  #logo-filename {
+    font-size: 0.75rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  #logo-acciones {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* ---- Sedes ---- */
+  .sede-edit .grid {
+    grid-template-columns: 1fr !important;
+    
+  }
+
+  /* ---- Botones de funciones ---- */
+  .flex.gap-6.flex-wrap {
+    flex-direction: row !important;
+    gap: 0.75rem !important;
+  }
+  #btn-confirmacion,
+  #btn-whatsapp {
+    flex: 1 !important;
+    min-width: 0 !important;
+    padding: 0.75rem 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* ---- Botón agregar sede ---- */
+  #add-ubicacion {
+    font-size: 0.875rem !important;
+    padding: 0.65rem 1rem !important;
+  }
+
+  #add-ubicacion .icono-mas {
+  font-size: 1.3rem !important;
+  line-height: 1;
+}
+
+  /* Autorización: scroll solo en móvil */
+    #autorizacion-scroll {
+      height: 90px !important;
+      overflow-y: auto !important;
+    }
+
+    #autorizacion-scroll p {
+      font-size: 0.55rem !important;
+      line-height: 1.3 !important;
+}
+
+    #bloque-autorizacion {
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
+    }
+    h3 { font-size: 0.75rem !important; line-height: 2.5 !important; }
+
+}
+
+@media (min-width: 641px) {
+  .flex.items-center.gap-2.bg-white.border.border-gray-200.px-4.py-4.min-w-0 {
+    border-radius: 0.6rem !important;
+  }
+}
 </style>
 
-<div class="flex justify-center items-center min-h-screen bg-gray-100">
+<div class="flex justify-center items-center min-h-screen bg-transparent px-4">
   <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg w-full max-w-3xl">
-    <h1 class="text-3xl font-bold text-green-700 text-center mb-6">Crear Nueva Solicitud</h1>
+    
+    <!-- Contenedor con imagen y título side by side -->
+    <div class="flex items-center justify-center mb-6" style="gap: 40px;">
+      <img src="{% static 'images/assets/PEGATIN-LANDING2.png' %}" 
+          alt="Descripción" 
+          style="width: 100px; height: 95px; transform: scaleX(-1);"
+          class="object-contain shrink-0">
+      <h1 class="font-bold text-black-700" style="font-size: 3rem;">Formulario de activación</h1>
+    </div>
 
     {% if messages %}
       <div class="mb-4">
@@ -37,199 +399,482 @@
       </div>
     {% endif %}
 
-    {% if form.errors or formset.errors %}
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-        <p>Por favor, corrige los siguientes errores:</p>
-        <ul>
-          {% for field in form %}
-            {% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}
-          {% endfor %}
-          {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
-          {% for ubicacion_form in formset %}
-            {% for field in ubicacion_form %}
-              {% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}
+    <!-- Modal de errores -->
+    <div id="modal-errores"
+      style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; 
+      background:rgba(0,0,0,0.6); z-index:9999;">
+
+      <div style="background:white; border-radius:1rem; padding:1.5rem;
+          width:90%; max-width:500px; margin:10vh auto;
+          box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+
+        <h3 style="font-size:1.2rem; font-weight:600; margin-bottom:1rem; color:#b91c1c;">
+          ⚠️ Corrige los siguientes errores
+        </h3>
+
+        <div class="text-sm text-gray-700">
+          <ul style="list-style:disc; padding-left:1.2rem;">
+            
+            {% for field in form %}
+              {% for error in field.errors %}
+                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+              {% endfor %}
             {% endfor %}
-          {% endfor %}
-        </ul>
+
+            {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+
+            {% for ubicacion_form in formset %}
+              {% for field in ubicacion_form %}
+                {% for error in field.errors %}
+                  <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+            {% endfor %}
+
+          </ul>
+        </div>
+
+        <div style="margin-top:1.5rem; text-align:right;">
+          <button onclick="cerrarModalErrores()"
+            style="background:#348200; color:white; border:none;
+            padding:0.5rem 1.5rem; border-radius:0.5rem; cursor:pointer;">
+            Cerrar
+          </button>
+        </div>
+
       </div>
-    {% endif %}
+    </div>
+
 
     <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 gap-6">
       {% csrf_token %}
       {{ form.non_field_errors }}
 
-      <!-- Código + Logo -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">Código de Solicitud</label>
-          <div class="flex gap-2">
-            {{ form.codigo|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
-            <button type="button" onclick="generarCodigo()" class="text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg">Generar</button>
-          </div>
-        </div>
-        <div>
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">Logo (se guardará en Amazon S3)</label>
-          {{ form.logo|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
-          <p class="text-sm text-gray-500 mt-1">Formatos aceptados: PNG, JPG, JPEG (máximo 5MB).</p>
+      <div class="flex flex-col items-center justify-center bg-white border px-4 py-2 min-w-0 text-center" style="border-radius: 1rem; border-color: #348200; gap: 2px;">
+        <span class="text-lg text-gray-700" style="line-height: 1.3;">
+          Seguridad, rapidez y personalización. Entrega inmediata con el logotipo y datos de tu empresa.
+        </span>
+        <span class="text-lg" style="color: #348200; line-height: 1.3;">
+          Completa todos los campos para activar tu Cinta de Empaque Inteligente.
+        </span>
+      </div>
+
+      <!-- Código -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="text-sm font-semibold text-gray-700 mb-1 block">Código de Solicitud</label>
+        <div class="flex gap-2">
+          {{ form.codigo|add_class:"flex-1"|attr:"id:id_codigo_solicitud"|attr:"style:border:none; outline:none; background:transparent; box-shadow:none;" }}
         </div>
       </div>
 
-      <!-- Información Interna -->
-      <hr class="my-4">
-      <h2 class="text-lg font-semibold text-gray-700 mt-2 mb-2">Información Interna</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Logo (subida de archivo) -->
+       
         <div>
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">Cajas</label>
-          {{ form.cajas|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
+        <span class="text-lg font-semibold text-gray-700">1. Imagen Empresarial:</span>
+        <span class="text-lg text-gray-700">
+          Adjunta el logo de tu empresa que se visualizará en la página.
+        </span>
+      </div>
+     <div class="border border-gray-200 bg-gray-50" style="border-radius: 1rem; padding: 0 0 0 5px;">
+      <div class="flex items-stretch gap-2">
+
+        <!-- Lado izquierdo: label + botón -->
+        <div class="flex flex-col justify-center items-center py-2 px-3" style="width: calc(50% - 4px);">
+          <div class="w-full">
+            <label for="{{ form.logo.id_for_label }}"
+              class="cursor-pointer flex w-full justify-center items-center gap-6 text-white text-sm font-semibold py-3 transition-colors duration-200"
+              style="background-color:#348200; border-radius:0.6rem;"
+              onmouseover="this.style.backgroundColor='#7ca880'"
+              onmouseout="this.style.backgroundColor='#348200'">
+              <img src="{% static 'images/assets/AGREGAR_ICON.svg' %}" alt="añadir imagen" style="width:15px; height:15px;" class="object-contain shrink-0">
+              Añadir imagen
+            </label>
+            <div class="hidden">{{ form.logo }}</div>
+          </div>
         </div>
-        <div>
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">Cintas</label>
-          {{ form.rollos|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
-          <p class="text-xs text-gray-500 mt-1">Se calcula como cajas * 36 (editable)</p>
+
+        <!-- Recuadro blanco lado derecho -->
+       <div class="flex items-center gap-2 bg-white border border-gray-200 px-4 py-4 min-w-0 self-stretch" style="width: calc(50% - 4px); border-radius: 0.6rem 1rem 1rem 0.6rem;">
+          {% if form.logo.value %}
+            <span style="width:8px; height:8px; background:#348200; border-radius:50%; display:inline-block; flex-shrink:0;"></span>
+            <img src="{% static 'images/assets/IMG_ICON.svg' %}" alt="logo" style="width:30px; height:35px;" class="object-contain shrink-0">
+            <span class="text-sm font-medium text-gray-700 truncate flex-1">{{ form.logo.value.name }}</span>
+            <div class="flex items-center shrink-0" style="gap:16px;">
+              <button type="button" class="logo-btn-icono" style="width:23px; height:23px; border:none; background:none;"
+                onclick="abrirModalVista('{{ form.logo.value.url }}')">
+                <img src="{% static 'images/assets/VISTA_ICON.svg' %}" alt="ver" style="width:15px; height:15px; max-width:15px; max-height:15px; object-fit:contain;">
+              </button>
+              <a href="{{ form.logo.value.url }}" download class="logo-btn-icono" style="width:23px; height:23px;">
+                <img src="{% static 'images/assets/DESCARGAR_ICON.svg' %}" alt="descargar" style="width:15px; height:15px; max-width:15px; max-height:15px; object-fit:contain;">
+              </a>
+              <button type="button" class="logo-btn-icono" style="width:23px; height:23px; border:none; background:none;">
+                <img src="{% static 'images/assets/ELIMINAR_ICON.svg' %}" alt="eliminar" style="width:15px; height:15px; max-width:15px; max-height:15px; object-fit:contain;">
+              </button>
+            </div>
+
+          {% else %}
+            <!-- Fila 1: ✓ + icono imagen juntos -->
+            <div style="display:flex; align-items:center; gap:4px;">
+              <span id="logo-punto-verde" style="display:none; color:#348200; font-weight:700; font-size:1rem;">✓</span>
+              <img id="logo-img-icon" src="{% static 'images/assets/IMG_ICON.svg' %}" style="width:20px; height:22px; display:none;" class="object-contain shrink-0">
+            </div>
+            <!-- Fila 2: nombre del archivo -->
+            <span id="logo-filename" class="text-sm text-gray-400 truncate" style="width:100%;">No se ha cargado ninguna imagen</span>
+            <!-- Fila 3: iconos de acción -->
+            <div id="logo-acciones" class="flex items-center" style="gap:10px; display:none !important;">
+              <button type="button" id="logo-preview-btn" class="logo-btn-icono" style="width:23px; height:23px; border:none; background:none;" onclick="abrirModalVista('')">
+                <img src="{% static 'images/assets/VISTA_ICON.svg' %}" alt="ver" style="width:15px; height:15px; max-width:15px; max-height:15px; object-fit:contain;">
+              </button>
+              <a id="logo-download" href="#" download class="logo-btn-icono" style="width:23px; height:23px;">
+                <img src="{% static 'images/assets/DESCARGAR_ICON.svg' %}" alt="descargar" style="width:15px; height:15px; max-width:15px; max-height:15px; object-fit:contain;">
+              </a>
+              <button type="button" id="logo-eliminar" class="logo-btn-icono" style="width:23px; height:23px; border:none;">
+                <img src="{% static 'images/assets/ELIMINAR_ICON.svg' %}" alt="eliminar" style="width:15px; height:15px; max-width:15px; max-height:15px; object-fit:contain;">
+              </button>
+            </div>
+          {% endif %}
         </div>
-        <div>
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">Seriales</label>
-          {{ form.seriales|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
-          <p class="text-xs text-gray-500 mt-1">Se calcula como cintas * 36 (editable)</p>
+        </div>
+
+      </div>
+    </div>
+    <!-- Modal vista de imagen -->
+      <div id="modal-vista-logo" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999; background:rgba(0,0,0,0.7);" onclick="cerrarModalVista()">
+        <div style="background:white; border-radius:1rem; padding:1.5rem; width:90%; max-width:32rem; margin:8vh auto; box-shadow:0 10px 30px rgba(0,0,0,0.3); text-align:center;" onclick="event.stopPropagation()">
+          <h3 style="font-size:1rem; font-weight:600; color:#374151; margin-bottom:1rem;">Vista previa del logo</h3>
+          <img id="modal-vista-img" src="" alt="logo" style="display:block; margin:0 auto; max-width:100%; max-height:300px; object-fit:contain; border-radius:0.5rem;">
+          <div style="margin-top:1rem;">
+            <button type="button" onclick="cerrarModalVista()"
+              style="border:1px solid #D1D5DB; color:#4B5563; font-weight:600; padding:0.5rem 1.5rem; border-radius:0.6rem; background:white; cursor:pointer; font-size:0.875rem;">
+              Cerrar
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Información Landing Page -->
-      <hr class="my-4">
-      <h2 class="text-lg font-semibold text-gray-700 mt-2 mb-2">Información Landing Page</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">Sobre Nosotros</label>
-          {{ form.sobre_nosotros|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
+    
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div style="overflow: hidden;">
+         <span class="text-lg font-semibold text-gray-700">2. Nombre empresarial:</span>
+          <span class="text-lg text-gray-700">
+            Si no tienes la imagen de la marca, indica el nombre de tu empresa.
+          </span>
+          {% if form.logo.value %}
+            {{ form.razon_social|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"|attr:"id:id_nombre_empresarial"|attr:"disabled:disabled"|attr:"placeholder:Se usará la imagen cargada" }}
+          {% else %}
+            {{ form.razon_social|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"|attr:"id:id_nombre_empresarial" }}
+          {% endif %}
         </div>
-        <div>
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">Razón Social</label>
+
+         <div style="overflow: hidden;">
+          <span class="text-lg font-semibold text-gray-700">3. Sobre Nosotros:</span>
+          <span class="text-lg text-gray-700">
+            Texto corto sobre la empresa o información que el cliente quiera mostrar.
+          </span>
+          {{ form.sobre_nosotros|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"|attr:"rows:3" }}
+        </div>
+
+        <div style="overflow: hidden;">
+          <span class="text-lg font-semibold text-gray-700">4. Razón Social:</span>
           {{ form.razon_social|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
         </div>
-        <div>
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">NIT</label>
+       
+        <div style="overflow: hidden;">
+         <span class="text-lg font-semibold text-gray-700">5. NIT</span>
           {{ form.nit|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
         </div>
-        <div>
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">Correo Electrónico</label>
-          {{ form.correo|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
-        </div>
-        <div>
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">Página Web</label>
-          {{ form.pagina_web|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
-        </div>
-        <div>
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">Link Adicional</label>
-          {{ form.link_adicional|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
+        <div style="overflow: hidden;">
+          <span class="text-lg font-semibold text-gray-700">6. Sedes:</span>
+          <span class="text-lg text-gray-700">Edita y añade varias sedes de tu empresa.</span>
         </div>
 
-        {# Celular (WhatsApp) — desde Solicitud #}
-        <div class="md:col-span-2">
-          <label class="text-sm font-semibold text-gray-700 mb-1 block">Celular (WhatsApp)</label>
-          {{ form.celular|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
-          <p class="text-xs text-gray-500 mt-1">Se usará para el botón de WhatsApp en la landing.</p>
+        <!-- Modal agregar sede -->
+      <div id="modal-sede" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999; background:rgba(0,0,0,0.5); overflow-y:auto;">
+      <div style="border-radius:1rem; background:white; padding:1.5rem; width:90%; max-width:28rem; margin:5vh auto; box-shadow:0 10px 30px rgba(0,0,0,0.2);">
+        <h3 style="font-size:1.1rem; font-weight:600; color:#374151; margin-bottom:1rem;">Agregar Sede</h3>
+        <div style="display:grid; gap:1rem;">
+          <div>
+            <label style="font-size:0.85rem; font-weight:600; color:#374151; display:block; margin-bottom:0.25rem;">Dirección</label>
+            <input type="text" id="modal-direccion" style="width:100%; border:1px solid #D1D5DB; border-radius:0.5rem; padding:0.5rem 0.75rem; font-size:0.875rem;" placeholder="Ej: Cra 2 #37-50">
+          </div>
+          <div>
+            <label style="font-size:0.85rem; font-weight:600; color:#374151; display:block; margin-bottom:0.25rem;">Teléfono</label>
+            <input type="text" id="modal-telefono" style="width:100%; border:1px solid #D1D5DB; border-radius:0.5rem; padding:0.5rem 0.75rem; font-size:0.875rem;" placeholder="Ej: 3001234567">
+          </div>
+          <div>
+            <label style="font-size:0.85rem; font-weight:600; color:#374151; display:block; margin-bottom:0.25rem;">Ciudad</label>
+            <input type="text" id="modal-ciudad" style="width:100%; border:1px solid #D1D5DB; border-radius:0.5rem; padding:0.5rem 0.75rem; font-size:0.875rem;" placeholder="Ej: Cali">
+          </div>
         </div>
-
-        <!-- Toggle: Mostrar botón de confirmar entrega -->
-        <div class="col-span-2" style="margin-top: 1.25rem;">
-          <input
-            id="id_mostrar_boton_entrega"
-            name="{{ form.mostrar_boton_entrega.html_name }}"
-            type="checkbox"
-            class="visually-hidden"
-            {% if form.instance.pk %}
-              {% if form.instance.mostrar_boton_entrega %}checked{% endif %}
-            {% else %}
-              {% if form.initial.mostrar_boton_entrega %}checked{% endif %}
-            {% endif %}
-          >
-          <label for="id_mostrar_boton_entrega" class="toggle-row">
-            <span class="toggle-track"><span class="toggle-knob"></span></span>
-            <span class="toggle-text">{{ form.mostrar_boton_entrega.label }}</span>
-          </label>
-
-          {% if form.mostrar_boton_entrega.errors %}
-            <p style="color:#ef4444; font-size:.875rem; margin-top:.25rem;">{{ form.mostrar_boton_entrega.errors|first }}</p>
-          {% endif %}
-          <p class="toggle-help">Si está activado, la landing de esta solicitud mostrará el botón “Confirmar entrega”.</p>
+        <p id="modal-error" style="color:#ef4444; font-size:0.75rem; margin-top:0.5rem; display:none;">Por favor completa todos los campos.</p>
+        <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+          <button type="button" id="modal-cancelar"
+            style="flex:1; border:1px solid #D1D5DB; color:#4B5563; font-weight:600; padding:0.5rem; border-radius:0.6rem; background:white; cursor:pointer; font-size:0.875rem;">
+            Cancelar
+          </button>
+          <button type="button" id="modal-guardar"
+            style="flex:1; background:#348200; color:white; font-weight:600; padding:0.5rem; border-radius:0.6rem; border:none; cursor:pointer; font-size:0.875rem;"
+            onmouseover="this.style.backgroundColor='#7ca880'"
+            onmouseout="this.style.backgroundColor='#348200'">
+            Guardar
+          </button>
         </div>
       </div>
+    </div>
 
-      <!-- Ubicaciones (dinámicas) -->
-      <hr class="my-4">
-      <div class="flex items-center justify-between mt-2">
-        <h2 class="text-lg font-semibold text-gray-700">Ubicaciones</h2>
-        <button type="button" id="add-ubicacion" class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg">
-          + Agregar ubicación
+        {{ formset.management_form }}
+
+        <!-- Contenedor oculto de inputs del formset -->
+        <div id="ubicaciones-container" style="position:absolute; width:1px; height:1px; overflow:hidden; opacity:0; pointer-events:none;">
+           <!-- ✅ inputs tienen name del formset directamente -->
+            <input type="hidden" name="ubicaciones-0-direccion" id="id_ubicaciones-0-direccion">
+            <input type="hidden" name="ubicaciones-0-telefono" id="id_ubicaciones-0-telefono">
+            <input type="hidden" name="ubicaciones-0-ciudad" id="id_ubicaciones-0-ciudad">
+          
+          {% for ubicacion_form in formset %}
+            {% if not forloop.first %}  
+              <div class="ubicacion-item">
+                {{ ubicacion_form.direccion }}
+                {{ ubicacion_form.telefono }}
+                {{ ubicacion_form.ciudad }}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <template id="empty-ubicacion-template">
+          <div class="ubicacion-item hidden">
+            {{ formset.empty_form.direccion|safe }}
+            {{ formset.empty_form.telefono|safe }}
+            {{ formset.empty_form.ciudad|safe }}
+            {% if formset.empty_form.DELETE %}
+              <input type="checkbox" class="hidden delete-field" name="{{ formset.empty_form.DELETE.html_name }}" id="{{ formset.empty_form.DELETE.id_for_label }}">
+            {% endif %}
+          </div>
+        </template>
+
+       <!-- Sede 1 visible por defecto -->
+        <div id="sedes-lista" class="flex flex-col gap-6 mt-4">
+          <div class="sede-card border border-gray-200 p-4 bg-white" data-index="0" style="border-radius: 0.75rem;">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-semibold" style="color:#348200;">Sede principal</span>
+              <div class="flex gap-2">
+                <button type="button" class="btn-edit-sede btn-sede-accion" title="Editar">
+                  <img src="{% static 'images/assets/EDITAR_ICON.svg' %}" alt="editar" style="width:15px; height:15px;">
+                </button>
+                <button type="button" class="btn-clear-sede btn-sede-accion" title="Limpiar">
+                  <img src="{% static 'images/assets/ELIMINAR_ICON.svg' %}" alt="Eliminar" style="width:15px; height:15px;">
+                </button>
+              </div>
+            </div>
+
+            <!-- Vista lectura -->
+            <div class="sede-view text-sm text-gray-600 space-y-0.5">
+              <p class="sede-view-direccion text-gray-400 italic">Sin dirección</p>
+              <p class="sede-view-telefono hidden"></p>
+              <p class="sede-view-ciudad hidden"></p>
+            </div>
+
+            <!-- Vista edición (solo visual) -->
+            <div class="sede-edit hidden mt-3">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <input type="text" data-field="direccion" data-index="0"
+                  class="sede-input border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"
+                  placeholder="Dirección">
+                <input type="text" data-field="telefono" data-index="0"
+                  class="sede-input border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"
+                  placeholder="Número Celular">
+                <input type="text" data-field="ciudad" data-index="0"
+                  class="sede-input border border-gray-300 rounded-lg px-3 py-2 text-sm w-full"
+                  placeholder="Ciudad">
+              </div>
+              <div class="flex gap-6 mt-4 justify-end">
+                <button type="button" class="btn-cancel-edit text-sm border border-gray-300 text-gray-600 px-3 py-1.5 rounded-lg">Cancelar</button>
+                <button type="button" class="btn-save-edit text-sm text-white px-3 py-1.5 rounded-lg"
+                  style="background-color:#348200;"
+                  onmouseover="this.style.backgroundColor='#7ca880'"
+                  onmouseout="this.style.backgroundColor='#348200'">Guardar</button>
+              </div>
+            </div>
+          </div>
+        </div>  
+
+        <!-- Botón agregar -->
+        <div class="mt-4 px-1">
+        <button type="button" id="add-ubicacion"
+          class="w-full font-semibold px-4 py-3 flex items-center justify-center gap-2 transition text-base"
+          style="background-color:#348200; color:white; border-radius:0.75rem; border: 2px solid #2a6800;"
+          onmouseover="this.style.backgroundColor='white'; this.style.color='#348200';"
+          onmouseout="this.style.backgroundColor='#348200'; this.style.color='white';">
+          <span class="icono-mas font-bold">+</span> Agregar una sede
         </button>
       </div>
 
-      {{ formset.management_form }}
-
-      <div id="ubicaciones-container" class="space-y-4">
-        {% for ubicacion_form in formset %}
-          <div class="ubicacion-item border border-gray-200 rounded-lg p-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                {{ ubicacion_form.direccion.label_tag }}
-                {{ ubicacion_form.direccion|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
-              </div>
-              <div>
-                {{ ubicacion_form.telefono.label_tag }}
-                {{ ubicacion_form.telefono|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
-              </div>
-              <div>
-                {{ ubicacion_form.ciudad.label_tag }}
-                {{ ubicacion_form.ciudad|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
-              </div>
-            </div>
-
-            {% if ubicacion_form.DELETE %}
-              <input type="checkbox" class="hidden delete-field" name="{{ ubicacion_form.DELETE.html_name }}" id="{{ ubicacion_form.DELETE.id_for_label }}">
-            {% endif %}
-
-            <div class="flex justify-end mt-3">
-              <button type="button" class="btn-remove-ubicacion text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded">
-                Eliminar
-              </button>
-            </div>
-          </div>
-        {% endfor %}
+        <div class="grid grid-cols-1" style="gap: 2rem; margin-top: 2rem;">
+        <div style="overflow: hidden;">
+        <span class="text-lg font-semibold text-gray-700">7. Correo Electrónico:</span>
+          {{ form.correo|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
+        </div>
+        <div style="overflow: hidden;">
+         <span class="text-lg font-semibold text-gray-700">8. Página Web:</span>
+          {{ form.pagina_web|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
+        </div>
+        <div style="overflow: hidden;">
+          <span class="text-lg font-semibold text-gray-700">9. Link Adicional:</span>
+          {{ form.link_adicional|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500" }}
+        </div>
+        <div style="overflow: hidden;">
+        <span class="text-lg font-semibold text-gray-700">10. Selecciona las funciones que requieres activar en la Cinta de Empaque Inteligente:</span>
+        </div>
       </div>
 
-      {# Empty form para clonar nuevas filas #}
-      <template id="empty-ubicacion-template">
-        <div class="ubicacion-item border border-gray-200 rounded-lg p-4">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              {{ formset.empty_form.direccion.label_tag|safe }}
-              {{ formset.empty_form.direccion|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"|safe }}
+         <div class="col-span-2" style="margin-top: 1.25rem;">
+
+            <!-- Input oculto original del formulario -->
+            <input
+              id="id_mostrar_boton_entrega"
+              name="{{ form.mostrar_boton_entrega.html_name }}"
+              type="checkbox"
+              class="visually-hidden"
+              {% if form.instance.pk %}
+                {% if form.instance.mostrar_boton_entrega %}checked{% endif %}
+              {% else %}
+                {% if form.initial.mostrar_boton_entrega %}checked{% endif %}
+              {% endif %}
+            >
+
+            <!-- Input oculto para el celular de WhatsApp -->
+            <input type="hidden" id="celular-whatsapp-hidden" name="celular_whatsapp" value="">
+
+           <!-- <p class="text-sm text-gray-500 mb-3">Selecciona las funciones que deseas activar:</p>-->
+
+            <div class="flex gap-6 flex-wrap">
+
+              <!-- Botón Confirmación de entrega -->
+              <button type="button" id="btn-confirmacion"
+                onclick="toggleBoton(this, 'id_mostrar_boton_entrega')"
+                style="border-radius:0.75rem; border:2px solid #D1D5DB; background:#F9FAFB; color:#6B7280; padding:1rem 1.5rem; min-width:130px; cursor:pointer; transition: all 0.2s; display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
+                <span style="font-size:1.8rem;">
+                  <img src="{% static 'images/assets/CONFIRMACION_ICON.svg' %}" 
+                    alt="box" class="btn-icono-img object-contain shrink-0"
+                    style="width:35px; height:35px;">
+                </span>
+                <span style="font-size:0.8rem; font-weight:600; text-align:center; line-height:1.3;">Confirmación<br>de entrega</span>
+              </button>
+
+              <!-- Botón Inquietudes y sugerencias -->
+              <button type="button" id="btn-whatsapp"
+                onclick="abrirModalWhatsapp()"
+                style="border-radius:0.75rem; border:2px solid #D1D5DB; background:#F9FAFB; color:#6B7280; padding:1rem 1.5rem; min-width:130px; cursor:pointer; transition: all 0.2s; display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
+                <span style="font-size:1.8rem;">
+                  <img src="{% static 'images/assets/WHATSAPP.svg' %}" 
+                    alt="whatsapp" class="btn-icono-img object-contain shrink-0"
+                    style="width:35px; height:35px;">
+                </span>
+                <span style="font-size:0.8rem; font-weight:600; text-align:center; line-height:1.3;">Inquietudes<br>y sugerencias</span>
+              </button>
+
             </div>
-            <div>
-              {{ formset.empty_form.telefono.label_tag|safe }}
-              {{ formset.empty_form.telefono|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"|safe }}
-            </div>
-            <div>
-              {{ formset.empty_form.ciudad.label_tag|safe }}
-              {{ formset.empty_form.ciudad|add_class:"w-full border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"|safe }}
-            </div>
+
+            {% if form.mostrar_boton_entrega.errors %}
+              <p style="color:#ef4444; font-size:.875rem; margin-top:.25rem;">{{ form.mostrar_boton_entrega.errors|first }}</p>
+            {% endif %}
           </div>
 
-          {% if formset.empty_form.DELETE %}
-            <input type="checkbox" class="hidden delete-field" name="{{ formset.empty_form.DELETE.html_name }}" id="{{ formset.empty_form.DELETE.id_for_label }}">
-          {% endif %}
-
-          <div class="flex justify-end mt-3">
-            <button type="button" class="btn-remove-ubicacion text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded">
-              Eliminar
-            </button>
+          <!-- Modal WhatsApp -->
+          <div id="modal-whatsapp" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999; background:rgba(0,0,0,0.5); overflow-y:auto;">
+            <div style="background:white; border-radius:0.75rem; padding:1.5rem; width:90%; max-width:24rem; margin:10vh auto; box-shadow:0 10px 30px rgba(0,0,0,0.2);">
+              <h3 style="font-size:1rem; font-weight:600; color:#374151; margin-bottom:0.5rem;">
+                <img src="{% static 'images/assets/WHATSAPP.svg' %}" 
+                  alt="whatsapp" 
+                  style="width: 35px; height: 35px;"
+                  class="object-contain shrink-0">
+                Inquietudes y sugerencias</h3>
+              <p style="font-size:0.8rem; color:#6B7280; margin-bottom:1rem;">Ingresa el número de WhatsApp que recibirá los mensajes de los clientes.</p>
+              <label style="font-size:0.85rem; font-weight:600; color:#374151; display:block; margin-bottom:0.25rem;">Número de celular</label>
+              <input type="text" id="input-celular-whatsapp"
+                style="width:100%; border:1px solid #D1D5DB; border-radius:0.5rem; padding:0.5rem 0.75rem; font-size:0.875rem;"
+                placeholder="Ej: 3001234567">
+              <p id="error-whatsapp" style="color:#ef4444; font-size:0.75rem; margin-top:0.4rem; display:none;">Por favor ingresa un número válido.</p>
+              <div style="display:flex; gap:0.75rem; margin-top:1.25rem;">
+                <button type="button" onclick="cerrarModalWhatsapp()"
+                  style="flex:1; border:1px solid #D1D5DB; color:#4B5563; font-weight:600; padding:0.5rem; border-radius:0.6rem; background:white; cursor:pointer; font-size:0.875rem;">
+                  Cancelar
+                </button>
+                <button type="button" onclick="guardarWhatsapp()"
+                  style="flex:1; background:#348200; color:white; font-weight:600; padding:0.5rem; border-radius:0.6rem; border:none; cursor:pointer; font-size:0.875rem;"
+                  onmouseover="this.style.backgroundColor='#7ca880'"
+                  onmouseout="this.style.backgroundColor='#348200'">
+                  Activar
+                </button>
+              </div>
+            </div>
           </div>
+       <div class="p-6" id="bloque-autorizacion">
+
+        <!-- Título -->
+        <h3 class="font-semibold text-gray-800 mb-3" style="text-align: center;">
+          Autorización de tratamiento de datos personales
+        </h3>
+
+        <!-- Bloque checkbox + texto -->
+       <div class="flex items-start gap-6">
+
+        <!-- ✅ Checkbox-->
+        <input
+            type="checkbox"
+            name="acepta_tratamiento_datos"
+            id="id_acepta_tratamiento_datos"
+            class="hidden"
+            {% if form.acepta_tratamiento_datos.value %}checked{% endif %}
+        >
+        
+      <button type="button"
+        id="btn-acepto-datos"
+        onclick="toggleAceptoDatos(this)"
+        style="width:28px; height:28px; min-width:28px; margin-top:2px; border-radius:0.4rem; border:2px solid #D1D5DB; background:#F9FAFB; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.9rem; transition:all 0.2s; flex-shrink:0;">
+      </button>
+
+      <div id="autorizacion-scroll" style="border: 1px solid #E5E7EB; border-radius: 0.5rem; padding: 8px 10px; background: #FAFAFA; flex: 1;">
+        <p class="text-gray-700" style="text-align: justify; font-size: 0.62rem; line-height: 1.35; margin: 0;">
+ 
+            De acuerdo con la Ley 1581 de 2012 y el Decreto 1377 de 2013, mediante la firma de este documento
+            autorizo de manera expresa, voluntaria e informada a CINTADINA S.A. para la recolección, almacenamiento,
+            uso, circulación, procesamiento y tratamiento de mis datos personales, incluyendo, pero
+            no limitado a, información identificación, contacto y datos relacionados con mi actividad como
+            cliente y/o proveedor o contratista. Los datos serán utilizados exclusivamente para las finalidades
+            relacionadas con la gestión comercial, cumplimiento de obligaciones legales y tributarias, comunicación
+            de novedades, cualquier otro propósito directamente relacionado con el vínculo comercial y
+            para consultar los datos en listas relacionadas con el Sistema de Administración de Riesgos de
+            Lavado de Activos y Financiación del Terrorismo, efectuar reporte a las autoridades competentes en
+            materia de LA/FT y C/ST. En cualquier momento, puedo ejercer mis derechos de acceso, corrección,
+            actualización, supresión y revocación de la autorización, tal como lo establece la legislación vigente,
+            contactado al correo: protecciondatos@cintandina.com y/o de manera física a la dirección a la kra.
+            2#37-50 de Cali. He leído y comprendido la política de tratamiento de datos personales de CINTANDINA
+            S.A. y otorgo mi consentimiento para el uso de mis datos personales de acuerdo con las
+            finalidades mencionadas.
+          </p>
         </div>
-      </template>
 
+      </div>
+        <!-- Error -->
+        <p id="error-acepto-datos"
+          class="text-red-500 text-xs mt-3 hidden">
+          Debes aceptar la política de tratamiento de datos para continuar.
+        </p>
+
+      </div>
       <!-- Botón final -->
-      <div>
-        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+      <div class="flex justify-center">
+        <button type="submit"
+          class="font-semibold px-4 py-3 flex items-center justify-center gap-2 transition text-base"
+          style="background-color:#348200; color:white; border-radius:0.75rem; border: 2px solid #2a6800;"
+          onmouseover="this.style.backgroundColor='white'; this.style.color='#348200';"
+          onmouseout="this.style.backgroundColor='#348200'; this.style.color='white';">
           Crear Solicitud
         </button>
       </div>
@@ -245,101 +890,499 @@
   </div>
 </div>
 
-<!-- Script para generar el código y calcular cintas/seriales -->
+
 <script>
-function generarCodigo() {
-  const codigo = 'CI' + Math.random().toString(36).substring(2, 10).toUpperCase();
-  const input = document.getElementById('id_codigo');
-  if (input) input.value = codigo;
-}
 
 function calcularCintasYSeriales() {
   const cajasInput = document.getElementById('id_cajas');
   const cintasInput = document.getElementById('id_rollos');
   const serialesInput = document.getElementById('id_seriales');
+  if (!cajasInput || !cintasInput || !serialesInput) return;
+  const cajas = parseInt(cajasInput.value) || 0;
+  cintasInput.value = cajas * 36;
+  serialesInput.value = cajas * 36;
+}
 
-  if (cajasInput && cintasInput && serialesInput) {
-    let cajas = parseInt(cajasInput.value) || 0;
-    let cintas = parseInt(cintasInput.value) || 0;
+document.addEventListener('DOMContentLoaded', function () {
 
-    if (cajasInput === document.activeElement || !cintas) {
-      cintas = cajas * 36;
-      cintasInput.value = cintas;
+  const addBtn          = document.getElementById('add-ubicacion');
+  const modal           = document.getElementById('modal-sede');
+  const btnCancelar     = document.getElementById('modal-cancelar');
+  const btnGuardar      = document.getElementById('modal-guardar');
+  const modalError      = document.getElementById('modal-error');
+  const sedesLista      = document.getElementById('sedes-lista');
+  const tpl             = document.getElementById('empty-ubicacion-template');
+  const totalFormsInput = document.querySelector('input[name$="-TOTAL_FORMS"]');
+
+  /* ===== Sede: edición inline ===== */
+  function initSedeCard(card) {
+    const btnEdit   = card.querySelector('.btn-edit-sede');
+    const btnClear  = card.querySelector('.btn-clear-sede');
+    const btnSave   = card.querySelector('.btn-save-edit');
+    const btnCancel = card.querySelector('.btn-cancel-edit');
+    const viewEl    = card.querySelector('.sede-view');
+    const editEl    = card.querySelector('.sede-edit');
+
+    if (btnEdit) {
+      btnEdit.addEventListener('click', () => {
+        const dir = card.querySelector('.sede-view-direccion').dataset.value || '';
+        const tel = card.querySelector('.sede-view-telefono').dataset.value || '';
+        const ciu = card.querySelector('.sede-view-ciudad').dataset.value || '';
+        card.querySelector('[data-field="direccion"]').value = dir;
+        card.querySelector('[data-field="telefono"]').value  = tel;
+        card.querySelector('[data-field="ciudad"]').value    = ciu;
+        viewEl.classList.add('hidden');
+        editEl.classList.remove('hidden');
+      });
     }
-    let seriales = cintas * 1; // tu cálculo actual
-    serialesInput.value = seriales;
+
+    if (btnSave) {
+      btnSave.addEventListener('click', () => {
+        const dir = card.querySelector('[data-field="direccion"]').value.trim();
+        const tel = card.querySelector('[data-field="telefono"]').value.trim();
+        const ciu = card.querySelector('[data-field="ciudad"]').value.trim();
+
+        
+        document.getElementById('id_ubicaciones-0-direccion').value = dir;
+        document.getElementById('id_ubicaciones-0-telefono').value = tel;
+        document.getElementById('id_ubicaciones-0-ciudad').value = ciu;
+
+        vDir.textContent = dir ? `Dirección: ${dir}` : 'Sin dirección';
+        vDir.dataset.value = dir;
+        vDir.classList.toggle('text-gray-400', !dir);
+        vDir.classList.toggle('italic', !dir);
+
+        if (tel) {
+          vTel.textContent = `Número Celular: ${tel}`;
+          vTel.dataset.value = tel;
+          vTel.classList.remove('hidden');
+        } else {
+          vTel.classList.add('hidden');
+        }
+
+        if (ciu) {
+          vCiu.textContent = `Ciudad: ${ciu}`;
+          vCiu.dataset.value = ciu;
+          vCiu.classList.remove('hidden');
+        } else {
+          vCiu.classList.add('hidden');
+        }
+
+        viewEl.classList.remove('hidden');
+        editEl.classList.add('hidden');
+      });
+    }
+
+    if (btnCancel) {
+      btnCancel.addEventListener('click', () => {
+        viewEl.classList.remove('hidden');
+        editEl.classList.add('hidden');
+      });
+    }
+
+    if (btnClear) {
+      btnClear.addEventListener('click', () => {
+        const idx = parseInt(card.dataset.index);
+        if (idx === 0) {
+          card.querySelector('.sede-view-direccion').textContent = 'Sin dirección';
+          card.querySelector('.sede-view-direccion').dataset.value = '';
+          card.querySelector('.sede-view-telefono').classList.add('hidden');
+          card.querySelector('.sede-view-ciudad').classList.add('hidden');
+          viewEl.classList.remove('hidden');
+          editEl.classList.add('hidden');
+        } else {
+          const deleteField = document.querySelector(`#ubicaciones-container [name="ubicaciones-${idx}-DELETE"]`);
+          if (deleteField) deleteField.checked = true;
+          card.remove();
+          renumerarSedes();
+        }
+      });
+    }
+  }
+
+  function renumerarSedes() {
+    sedesLista.querySelectorAll('.sede-card').forEach((c, i) => {
+      const label = c.querySelector('span');
+      if (label) label.textContent = i === 0 ? 'Sede principal' : `Sede ${i + 1}`;
+    });
+  }
+
+  initSedeCard(document.querySelector('.sede-card[data-index="0"]'));
+
+
+  /* ===== Abrir modal ===== */
+  function abrirModal() {
+    document.getElementById('modal-direccion').value = '';
+    document.getElementById('modal-telefono').value  = '';
+    document.getElementById('modal-ciudad').value    = '';
+    document.getElementById('modal-error').style.display = 'none';
+    modal.style.display = 'block';
+    // Forzar border-radius
+    const inner = modal.querySelector('div');
+    if (inner) inner.style.setProperty('border-radius', '1rem', 'important');
+  }
+
+  /* ===== Cerrar modal ===== */
+  function cerrarModal() {
+    modal.style.display = 'none';
+  }
+
+  addBtn.addEventListener('click', abrirModal);
+  btnCancelar.addEventListener('click', cerrarModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) cerrarModal(); });
+
+  /* ===== Guardar sede desde modal ===== */
+  btnGuardar.addEventListener('click', () => {
+  const direccion = document.getElementById('modal-direccion').value.trim();
+  const telefono  = document.getElementById('modal-telefono').value.trim();
+  const ciudad    = document.getElementById('modal-ciudad').value.trim();
+  
+  document.getElementById('modal-error').style.display = 'none';
+
+  const sedePrincipal = sedesLista.querySelector('.sede-card[data-index="0"]');
+  const dirPrincipal  = sedePrincipal?.querySelector('.sede-view-direccion')?.dataset.value || '';
+
+  if (!dirPrincipal) {
+    sedePrincipal.querySelector('.sede-view-direccion').textContent = `Dirección: ${direccion}`;
+    sedePrincipal.querySelector('.sede-view-direccion').dataset.value = direccion;
+    sedePrincipal.querySelector('.sede-view-direccion').classList.remove('text-gray-400', 'italic');
+    sedePrincipal.querySelector('.sede-view-telefono').textContent = `Número Celular: ${telefono}`;
+    sedePrincipal.querySelector('.sede-view-telefono').dataset.value = telefono;
+    sedePrincipal.querySelector('.sede-view-telefono').classList.remove('hidden');
+    sedePrincipal.querySelector('.sede-view-ciudad').textContent = `Ciudad: ${ciudad}`;
+    sedePrincipal.querySelector('.sede-view-ciudad').dataset.value = ciudad;
+    sedePrincipal.querySelector('.sede-view-ciudad').classList.remove('hidden');
+
+    document.getElementById('id_ubicaciones-0-direccion').value = direccion;
+    document.getElementById('id_ubicaciones-0-telefono').value = telefono;
+    document.getElementById('id_ubicaciones-0-ciudad').value = ciudad;
+
+    cerrarModal();
+    return;
+  }
+
+  const index = parseInt(totalFormsInput.value);
+  const fragment = document.importNode(tpl.content, true);
+  fragment.querySelectorAll('[name],[id],[for]').forEach(el => {
+    ['name', 'id', 'for'].forEach(attr => {
+      if (el.hasAttribute(attr)) {
+        el.setAttribute(attr, el.getAttribute(attr).replace(/__prefix__/g, index));
+      }
+    });
+  });
+
+  const hiddenDiv = fragment.querySelector('.ubicacion-item');
+  hiddenDiv.querySelector('[name$="-direccion"]').value = direccion;
+  hiddenDiv.querySelector('[name$="-telefono"]').value  = telefono;
+  hiddenDiv.querySelector('[name$="-ciudad"]').value    = ciudad;
+  document.getElementById('ubicaciones-container').appendChild(fragment);
+  totalFormsInput.value = index + 1;
+
+  const sedeNum = sedesLista.querySelectorAll('.sede-card').length + 1;
+  const card = document.createElement('div');
+  card.className = 'sede-card border border-gray-200 p-4 bg-white';
+  card.style.borderRadius = '0.75rem';
+  card.dataset.index = index;
+  
+  
+  let sedeViewFields = '';
+
+    if (direccion?.trim()) {
+      sedeViewFields += `
+        <p class="sede-view-direccion" data-value="${direccion}">
+          Dirección: ${direccion}
+        </p>`;
+    }
+
+    if (telefono?.trim()) {
+      sedeViewFields += `
+        <p class="sede-view-telefono" data-value="${telefono}">
+          Número Celular: ${telefono}
+        </p>`;
+    }
+
+    if (ciudad?.trim()) {
+      sedeViewFields += `
+        <p class="sede-view-ciudad" data-value="${ciudad}">
+          Ciudad: ${ciudad}
+        </p>`;
+    }
+
+  card.innerHTML = `
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-sm font-semibold" style="color:#348200;">Sede ${sedeNum}</span>
+      <div class="flex gap-2">
+        <button type="button" class="btn-edit-sede btn-sede-accion" title="Editar">
+        <img src="{% static 'images/assets/EDITAR_ICON.svg' %}" alt="editar" style="width:15px; height:15px;" class="object-contain shrink-0">
+      </button>
+      <button type="button" class="btn-clear-sede btn-sede-accion" title="Limpiar">
+        <img src="{% static 'images/assets/ELIMINAR_ICON.svg' %}" alt="Eliminar" style="width:15px; height:15px;" class="object-contain shrink-0">
+      </button>
+      </div>
+
+    </div>
+    <div class="sede-view text-sm text-gray-600 space-y-0.5">
+      ${sedeViewFields}
+    </div>
+    <div class="sede-edit hidden mt-3">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <input type="text" data-field="direccion" data-index="${index}" class="sede-input border border-gray-300 rounded-lg px-3 py-2 text-sm w-full" placeholder="Dirección" value="${direccion}">
+        <input type="text" data-field="telefono" data-index="${index}" class="sede-input border border-gray-300 rounded-lg px-3 py-2 text-sm w-full" placeholder="Número Celular" value="${telefono}">
+        <input type="text" data-field="ciudad" data-index="${index}" class="sede-input border border-gray-300 rounded-lg px-3 py-2 text-sm w-full" placeholder="Ciudad" value="${ciudad}">
+      </div>
+      <div class="flex gap-6 mt-4 justify-end">
+      <button type="button" class="btn-cancel-edit text-sm border border-gray-300 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition">Cancelar</button>
+      <button type="button" class="btn-save-edit text-sm text-white px-3 py-1.5 rounded-lg transition"
+        style="background-color:#348200;"
+        onmouseover="this.style.backgroundColor='#7ca880'"
+        onmouseout="this.style.backgroundColor='#348200'">Guardar</button>
+    </div>
+    </div>
+  `;
+  initSedeCard(card);
+  sedesLista.appendChild(card);
+  cerrarModal();
+});
+
+  /* ===== Logo filename ===== */
+  const logoInput    = document.getElementById('{{ form.logo.id_for_label }}');
+  const filenameSpan = document.getElementById('logo-filename');
+  const logoAcciones = document.getElementById('logo-acciones');
+  const logoImgIcon  = document.getElementById('logo-img-icon');
+
+  if (logoInput && filenameSpan) {
+  logoInput.addEventListener('change', function () {
+    if (this.files && this.files[0]) {
+      const file = this.files[0];
+      const objectURL = URL.createObjectURL(file);
+
+      // Mostrar nombre
+      filenameSpan.textContent = file.name;
+      filenameSpan.classList.remove('text-gray-400');
+      filenameSpan.classList.add('text-gray-700', 'font-medium');
+
+      // Mostrar ícono de imagen
+      if (logoImgIcon) logoImgIcon.style.display = 'block';
+
+      // Mostrar iconos
+      if (logoAcciones) logoAcciones.style.setProperty('display', 'flex', 'important');
+
+      // Asignar URLs
+      document.getElementById('logo-download').href = objectURL;
+
+      // Asignar URL al botón de vista
+      const btnVista = document.getElementById('logo-preview-btn');
+      if (btnVista) btnVista.setAttribute('onclick', `abrirModalVista('${objectURL}')`);
+
+      // Mostrar chilito verde
+      const puntoVerde = document.getElementById('logo-punto-verde');
+      if (puntoVerde) puntoVerde.style.display = 'inline-block';
+
+      // Deshabilitar campo nombre
+      const campoNombre = document.getElementById('id_nombre_empresarial');
+      if (campoNombre) {
+        campoNombre.disabled = true;
+        campoNombre.value = '';
+        campoNombre.placeholder = 'Se usará la imagen cargada';
+      }
+    }
+  });
+}
+const logoBtnEliminar = document.getElementById('logo-eliminar');
+
+if (logoBtnEliminar) {
+  logoBtnEliminar.addEventListener('click', function () {
+    logoInput.value = '';
+
+    filenameSpan.textContent = 'No se ha cargado ninguna imagen';
+    filenameSpan.classList.add('text-gray-400');
+    filenameSpan.classList.remove('text-gray-700', 'font-medium');
+
+    if (logoImgIcon) logoImgIcon.style.display = 'none';
+    if (logoAcciones) logoAcciones.style.setProperty('display', 'none', 'important');
+
+    const campoNombre = document.getElementById('id_nombre_empresarial');
+    if (campoNombre) {
+      campoNombre.disabled = false;
+      campoNombre.placeholder = '';
+    }
+
+    // ← AQUI estaba el bug: decía display 'inline-block' en lugar de 'none'
+    const puntoVerde = document.getElementById('logo-punto-verde');
+    if (puntoVerde) puntoVerde.style.display = 'none';
+  });
+}
+
+/* ===== Forzar border-radius del modal via JS ===== */
+const modalInner = modal.querySelector('div');
+if (modalInner) {
+  modalInner.style.setProperty('border-radius', '1rem', 'important');
+}
+
+// Validar antes de submit
+
+document.querySelector('form').addEventListener('submit', function(e) {
+   
+    const input = document.getElementById('id_acepta_tratamiento_datos');
+    if (!input || !input.checked) {
+        e.preventDefault();
+        document.getElementById('error-acepto-datos').classList.remove('hidden');
+        document.getElementById('btn-acepto-datos').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+});
+
+}); 
+
+
+/* ===== Botones de funciones ===== */
+function toggleBoton(btn, checkboxId) {
+  const checkbox = document.getElementById(checkboxId);
+  const activo = btn.dataset.activo === 'true';
+  if (activo) {
+    btn.dataset.activo = 'false';
+    btn.style.background = '#F9FAFB';
+    btn.style.color = '#6B7280';
+    btn.style.borderColor = '#D1D5DB';
+    btn.classList.remove('activo');
+    if (checkbox) checkbox.checked = false;
+  } else {
+    btn.dataset.activo = 'true';
+    btn.style.background = '#348200';
+    btn.style.color = 'white';
+    btn.style.borderColor = '#348200';
+    btn.classList.add('activo');
+    if (checkbox) checkbox.checked = true;
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  const cajasInput = document.getElementById('id_cajas');
-  const cintasInput = document.getElementById('id_rollos');
-  const serialesInput = document.getElementById('id_seriales');
-  if (cajasInput) cajasInput.addEventListener('input', calcularCintasYSeriales);
-  if (cintasInput) cintasInput.addEventListener('input', calcularCintasYSeriales);
-  if (serialesInput) serialesInput.addEventListener('input', function() {});
-  calcularCintasYSeriales();
+function abrirModalWhatsapp() {
+  document.getElementById('input-celular-whatsapp').value =
+    document.getElementById('celular-whatsapp-hidden').value || '';
+  document.getElementById('error-whatsapp').style.display = 'none';
+  document.getElementById('modal-whatsapp').style.display = 'block';
+}
 
-  // === JS robusto para el formset dinámico de Ubicaciones ===
-  const addBtn = document.getElementById('add-ubicacion');
-  const container = document.getElementById('ubicaciones-container');
-  const tpl = document.getElementById('empty-ubicacion-template');
+function cerrarModalWhatsapp() {
+  document.getElementById('modal-whatsapp').style.display = 'none';
+}
 
-  if (!addBtn || !container || !tpl) {
-    console.warn('Formset dinámico: faltan nodos en el DOM (addBtn/container/template).');
+function guardarWhatsapp() {
+  const val = document.getElementById('input-celular-whatsapp').value.trim();
+  if (!val || val.length < 7) {
+    document.getElementById('error-whatsapp').style.display = 'block';
     return;
   }
+  document.getElementById('error-whatsapp').style.display = 'none';
+  document.getElementById('celular-whatsapp-hidden').value = val;
 
-  // Intenta obtener TOTAL_FORMS con el prefijo esperado y con fallback
-  let totalFormsInput =
-    document.querySelector('input[name="{{ formset.prefix }}-TOTAL_FORMS"]') ||
-    container.querySelector('input[name$="-TOTAL_FORMS"]') ||
-    document.querySelector('input[name$="-TOTAL_FORMS"]');
+  const btn = document.getElementById('btn-whatsapp');
+  btn.dataset.activo = 'true';
+  btn.style.background = '#348200';
+  btn.style.color = 'white';
+  btn.style.borderColor = '#348200';
+  btn.classList.add('activo');  
 
-  if (!totalFormsInput) {
-    console.warn('Formset dinámico: no se encontró TOTAL_FORMS. Verifica el management_form en el template.');
-    return;
+  cerrarModalWhatsapp();
+}
+
+// Inicializar estado del botón entrega según el checkbox
+const checkEntrega = document.getElementById('id_mostrar_boton_entrega');
+const btnConfirmacion = document.getElementById('btn-confirmacion');
+if (checkEntrega && checkEntrega.checked) {
+  btnConfirmacion.dataset.activo = 'true';
+  btnConfirmacion.style.background = '#348200';
+  btnConfirmacion.style.color = 'white';
+  btnConfirmacion.style.borderColor = '#348200';
+  btnConfirmacion.classList.add('activo');
+}
+
+/* ===== Confirmación de lectura de datos ===== */
+function toggleAceptoDatos(btn) {
+  const activo = btn.dataset.activo === 'true';
+  if (activo) {
+    btn.dataset.activo = 'false';
+    btn.style.background = '#F9FAFB';
+    btn.style.borderColor = '#D1D5DB';
+    btn.textContent = '';
+    document.getElementById('acepto-datos-hidden').value = 'false';
+  } else {
+    btn.dataset.activo = 'true';
+    btn.style.background = '#348200';
+    btn.style.borderColor = '#348200';
+    btn.textContent = '✓';
+    btn.style.color = 'white';
+    document.getElementById('acepto-datos-hidden').value = 'true';
+  }
+}
+
+// ===== Modal vista logo =====
+function abrirModalVista(url) {
+  document.getElementById('modal-vista-img').src = url;
+  document.getElementById('modal-vista-logo').style.display = 'block';
+}
+
+function cerrarModalVista() {
+  document.getElementById('modal-vista-logo').style.display = 'none';
+  document.getElementById('modal-vista-img').src = '';
+}
+
+function toggleAceptoDatos(btn) {
+    const input = document.getElementById('id_acepta_tratamiento_datos');
+
+    input.checked = !input.checked;
+
+    if (input.checked) {
+        btn.style.background = '#348200';
+        btn.style.color = 'white';
+        btn.innerHTML = '✓';
+    } else {
+        btn.style.background = '#F9FAFB';
+        btn.style.color = '#6B7280';
+        btn.innerHTML = '';
+    }
+}
+
+function cerrarModalErrores(){
+  document.getElementById("modal-errores").style.display = "none";
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+
+  const hayErrores = {{ form.errors|yesno:"true,false" }} 
+                     || {{ formset.errors|yesno:"true,false" }};
+
+  if(hayErrores){
+      document.getElementById("modal-errores").style.display = "block";
   }
 
-  function bindRemoveButtons(scope) {
-    (scope || document).querySelectorAll('.btn-remove-ubicacion').forEach(btn => {
-      btn.onclick = function() {
-        const item = this.closest('.ubicacion-item');
-        const del = item.querySelector('input.delete-field');
-        if (del) { // si existe campo DELETE (instancias existentes)
-          del.checked = true;
-          item.style.display = 'none';
-        } else {   // nuevas filas: quitamos del DOM y decrementamos TOTAL_FORMS
-          item.remove();
-          const current = parseInt(totalFormsInput.value, 10) || 0;
-          totalFormsInput.value = Math.max(0, current - 1);
-        }
-      };
-    });
-  }
-  bindRemoveButtons();
-
-  addBtn.addEventListener('click', function() {
-    const index = parseInt(totalFormsInput.value, 10) || 0;
-    const fragment = document.importNode(tpl.content, true);
-
-    fragment.querySelectorAll('[name],[id],[for]').forEach(el => {
-      ['name','id','for'].forEach(attr => {
-        if (el.hasAttribute(attr)) {
-          el.setAttribute(attr, el.getAttribute(attr).replace(/__prefix__/g, index));
-        }
-      });
-    });
-
-    container.appendChild(fragment);
-    totalFormsInput.value = index + 1;
-    bindRemoveButtons(container);
-  });
 });
+
+document.getElementById("id_nit").addEventListener("blur", function(){
+
+    const nit = this.value;
+
+    if(!nit) return;
+
+    fetch(`/buscar-nit/?nit=${nit}`)
+    .then(response => response.json())
+    .then(data => {
+
+        if(data.existe){
+
+            document.getElementById("id_razon_social").value = data.razon_social || "";
+            document.getElementById("id_correo").value = data.correo || "";
+            document.getElementById("id_pagina_web").value = data.pagina_web || "";
+            document.getElementById("id_celular").value = data.celular || "";
+
+        }
+
+    });
+
+});
+
+
 </script>
+
 {% endblock %}
-
-
-
 
 

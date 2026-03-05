@@ -95,8 +95,9 @@ if ENVIRONMENT == 'production':
 
 
 # Toggle para habilitar S3 (en local y prod)
-USE_S3 = os.getenv('USE_S3', '1') == '1'
+#USE_S3 = os.getenv('USE_S3', '1') == '1'
 
+USE_S3 = os.getenv('USE_S3', 'True') == 'True'
 
 # Configuración de Amazon S3 para archivos multimedia
 if USE_S3:
@@ -183,12 +184,14 @@ if ENVIRONMENT == 'production':
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'gestion_etiquetas_qr',
-            'USER': 'postgres',
-            'PASSWORD': '2024',
-            'HOST': 'localhost',
-            'PORT': '5432',
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+           # 'ENGINE': 'django.db.backends.postgresql',
+            #'NAME': 'gestion_etiquetas_qr',
+            #'USER': 'postgres',
+            #'PASSWORD': '2024',
+            #'HOST': 'localhost',
+            #'PORT': '5432',
         }
     }
 
@@ -238,6 +241,7 @@ LANDING_TEMPLATE_PATTERNS = [
     'delmonte_landing1.html',
     'templateCintandina.html',
     'templateProducto1.html',
+    'crear_solicitud.html',
     # Agrega más patrones si los usas: 'micliente/*.html', etc.
 ]
 
@@ -250,7 +254,7 @@ LANDING_TEMPLATE_EXCLUDE = [
     'index.html',
     'crear_template_cliente.html',
     'listado_templates.html',
-    'crear_solicitud.html',
+    #'crear_solicitud.html',
     'editar_solicitud.html',
     'buscar_solicitud.html',
     'ver_solicitud.html',
@@ -261,7 +265,7 @@ LANDING_TEMPLATE_EXCLUDE = [
     'cliente_success.html',
     'crear_cliente.html',
     'crear_producto.html',
-    'crear_solicitud.html',
+    #'crear_solicitud.html',
     'crear_template_cliente.html',
     'dashboard.html',
     'editar_solicitud.html',

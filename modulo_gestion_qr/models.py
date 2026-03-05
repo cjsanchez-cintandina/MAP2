@@ -1,4 +1,5 @@
 import uuid
+import re
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group, Permission
@@ -6,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.text import slugify
+
 
 
 
@@ -121,16 +123,16 @@ class Solicitud(models.Model):
     correo = models.EmailField()
     pagina_web = models.URLField(blank=True)
     link_adicional = models.URLField(blank=True)
-    cajas = models.PositiveIntegerField()
-    rollos = models.PositiveIntegerField()
-    seriales = models.PositiveIntegerField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)  # ← nuevo
     mostrar_boton_entrega = models.BooleanField(
         default=False,
-        verbose_name="Mostrar botón de confirmar entrega"
-    )  # ← Nuevo campo
+        verbose_name="Mostrar botón de confirmar entrega")
+    acepta_tratamiento_datos = models.BooleanField(
+        default=False,
+        verbose_name="Acepta tratamiento de datos")
 
+    
     def save(self, *args, **kwargs):
         if not self.codigo:
             import uuid
@@ -145,14 +147,37 @@ class Solicitud(models.Model):
         if self.logo:
             return self.logo.url
         return f"{settings.STATIC_URL}images/default.png"
+    
+    def celular_internacional(self): #SE AGREGA ESTE BLOQUE PARA  FORZAR EL FORMATO DE WHATS APP +57
+        if not self.celular:
+            return None
+
+        # Solo números
+        numero = re.sub(r'\D', '', self.celular)
+
+        # Quitar 57 si ya viene
+        if numero.startswith('57'):
+            numero = numero[2:]
+
+        # Validar longitud Colombia
+        if len(numero) == 10:
+            return f'+57{numero}'
+
+        return None  # número inválido
+
 
 
 # models.py
 class Entrega(models.Model):
     solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE, related_name='entregas')
 
-    # Antes: OneToOneField
-    serial = models.ForeignKey(Serial, on_delete=models.CASCADE, related_name='entregas')
+    serial = models.ForeignKey(
+        "Serial",
+        on_delete=models.CASCADE,
+        related_name='entregas',
+        null=True,
+        blank=True
+    )
 
     nombre = models.CharField(max_length=100)
     correo = models.EmailField()
@@ -162,20 +187,25 @@ class Entrega(models.Model):
     fecha_entrega = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Entrega {self.serial.serial} - {self.nombre}'
+        if self.serial:
+            return f'Entrega {self.serial.serial} - {self.nombre}'
+        return f'Entrega sin Serial - {self.nombre}'
 
 
-    
 
 class Ubicacion(models.Model):
-    solicitud = models.ForeignKey(Solicitud, related_name="ubicaciones", on_delete=models.CASCADE)
-    direccion = models.CharField(max_length=255)
-    telefono = models.CharField(max_length=50)
-    ciudad = models.CharField(max_length=100)
+    solicitud = models.ForeignKey(
+        'Solicitud',
+        on_delete=models.CASCADE,
+        related_name='ubicaciones'
+    )
+    direccion = models.CharField(max_length=255, blank=True)
+    telefono = models.CharField(max_length=20, blank=True)
+    ciudad = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return f"{self.direccion} ({self.ciudad})"
-
+        return f"{self.direccion} - {self.ciudad}"
+    
 
 # Modelo de roles
 class Rol(models.Model):
